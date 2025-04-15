@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>簡單投票</title>
+</head>
+<body>
+  <h1>你喜歡這個範例嗎？</h1>
+  <button onclick="sendVote('yes')">是</button>
+  <button onclick="sendVote('no')">否</button>
+
+  <p id="result"></p>
+
+  <script>
+    async function sendVote(answer) {
+      const res = await fetch('/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answer })
+      });
+      const data = await res.json();
+      document.getElementById('result').innerText =
+        `目前統計 - 是：${data.votes.yes}，否：${data.votes.no}`;
+    }
+  </script>
+</body>
+</html>
