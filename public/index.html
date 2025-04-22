@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -450,8 +449,12 @@
             <p>大家好，我們是臺灣師範大學音樂系的同學！</p>
             <p>由於課堂作業需求，</p>
             <p>我們正在探討背景音樂對於人們專注力的影響，</p>
-            <p>於是開啟了一個小研究。希望大家能填答以下問題及體驗小遊戲（記得打開聲音喔🔊），謝謝🙏</p>
-            <button onclick="showInstructions()" class="next-button">下一頁</button>
+            <p>於是開啟了一個小研究。希望大家能填答以下問題及體驗小遊戲，謝謝🙏</p>
+            <p>本測驗約需 5 分鐘，建議戴上耳機🎧測試，請將音量調至舒適大小。</p>
+            <p class="volume-reminder">⚠️ 請點擊下方按鈕開啟聲音後再繼續</p>
+            <button onclick="initAudio()" class="next-button" id="initMusicBtn">點擊開啟聲音</button>
+            <p id="audioWarning" class="volume-reminder" style="display: none;">⚠️ 若無聽到音樂則請停止作答，請使用其他裝置測試</p>
+            <button onclick="showInstructions()" class="next-button" id="nextPageBtn" style="display: none;">下一頁</button>
         </div>
     </div>
 
@@ -470,7 +473,7 @@
                     <li>無音樂</li>
                     <li>古典音樂（Mozart）</li>
                     <li>爵士音樂（Miles Davis）</li>
-                    <li>獨立音樂（Deftones）</li>
+                    <li>另類音樂（Deftones）</li>
                 </ul>
             </div>
             
@@ -1191,7 +1194,7 @@
                         musicName = "爵士音樂";
                         break;
                     case 'indie':
-                        musicName = "獨立音樂";
+                        musicName = "另類音樂";
                         break;
                     case 'none':
                         musicName = "無音樂";
@@ -1219,7 +1222,7 @@
                     bestMusicName = "爵士音樂";
                     break;
                 case 'indie':
-                    bestMusicName = "獨立音樂";
+                    bestMusicName = "另類音樂";
                     break;
                 case 'none':
                     bestMusicName = "無音樂";
@@ -1250,7 +1253,7 @@
                 switch(musicType) {
                     case 'classical': musicName = "古典音樂"; break;
                     case 'jazz': musicName = "爵士音樂"; break;
-                    case 'indie': musicName = "獨立音樂"; break;
+                    case 'indie': musicName = "另類音樂"; break;
                     case 'none': musicName = "無音樂"; break;
                 }
                 
@@ -1277,10 +1280,7 @@
               body: JSON.stringify(feedbackArgs)
             });
 
-            // 顯示結果統計 alert
             setTimeout(() => {
-                // alert(summary);
-                // alert 關閉後顯示感謝訊息
                 document.getElementById("resultSection").style.display = "none";
                 const thankYouDiv = document.createElement("div");
                 thankYouDiv.className = "center-container";
@@ -1292,7 +1292,7 @@
                     </div>
                 `;
                 document.body.appendChild(thankYouDiv);
-            }, 5000);
+            }, 500);
         }
 
         window.onload = function() {
@@ -1312,11 +1312,38 @@
         function showInstructions() {
             document.getElementById("welcomeSection").style.display = "none";
             document.getElementById("instructionsSection").style.display = "block";
+            // 在使用者點擊開始測驗時停止背景音樂
+            testAudio.pause();
+            testAudio.currentTime = 0;
         }
 
         function startTest() {
+            testAudio.pause();
+            testAudio.currentTime = 0;
             document.getElementById("instructionsSection").style.display = "none";
             document.getElementById("formSection").style.display = "block";
+        }
+
+        // 簡化音樂播放邏輯
+        const testAudio = new Audio('classical.mp3');
+        testAudio.loop = true;
+
+        function initAudio() {
+            try {
+                testAudio.play().then(() => {
+                    document.getElementById('initMusicBtn').style.display = 'none';
+                    document.getElementById('audioWarning').style.display = 'block';
+                    setTimeout(() => {
+                        document.getElementById('nextPageBtn').style.display = 'block';
+                    }, 1000); // 延遲1秒顯示下一步按鈕
+                }).catch(error => {
+                    console.log('無法播放音樂:', error);
+                    alert('無法播放音樂，請使用其他裝置測試');
+                });
+            } catch (error) {
+                console.log('播放出錯:', error);
+                alert('無法播放音樂，請使用其他裝置測試');
+            }
         }
     </script>
 </body>
