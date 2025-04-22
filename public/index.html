@@ -1267,7 +1267,8 @@
                 major: major,
                 grade: grade,
                 habit: habitText,
-                results: resultArgs
+                results: resultArgs,
+                datetime: new Date().toISOString()
             };
 
             fetch('/musicData', {
