@@ -7,22 +7,18 @@ const port = 3000;
 app.use(express.json());
 app.use(express.static('public'));
 
-data_path = path.join(__dirname, 'votes.json');
+data_path = path.join(__dirname, 'public/data.json');
 // 檢查 votes.json 是否存在，如果不存在則創建一個空的 votes.json 文件
 if (!fs.existsSync(data_path)) {
-  fs.writeFileSync(data_path, JSON.stringify({ yes: 0, no: 0 }));
+  fs.writeFileSync(data_path, JSON.stringify([]));
 }
 
 // 處理投票請求
-app.post('/vote', (req, res) => {
-  const { answer } = req.body;
-  let votes = JSON.parse(fs.readFileSync(data_path, 'utf8'));
-  if (answer === 'yes') votes.yes++;
-  else if (answer === 'no') votes.no++;
-  fs.writeFileSync(data_path, JSON.stringify(votes));
-  // 更新 votes.json 文件
-
-  res.json({ message: '收到投票！', votes });
+app.post('/musicData', (req, res) => {
+  const data = req.body;
+  let file_data = JSON.parse(fs.readFileSync(data_path, 'utf8'));
+  file_data.push(data);
+  fs.writeFileSync(data_path, JSON.stringify(file_data));
 });
 
 // 查看統計數據
